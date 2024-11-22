@@ -1,17 +1,27 @@
-import * as BunnySDK from "https://esm.sh/@bunny.net/edgescript-sdk@0.10.0";
+/* @refresh reload */
+import { Router } from "@solidjs/router"
+import { render } from "solid-js/web"
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+import { Index } from "./app"
+
+declare global {
+  interface Window {
+    [key: string]: any
+  }
 }
 
-console.log("Starting server...");
-const listener = BunnySDK.net.tcp.unstable_new();
+declare module "solid-js" {
+  namespace JSX {
+    interface CustomEvents extends HTMLElementEventMap {}
+    interface CustomCaptureEvents extends HTMLElementEventMap {}
+  }
+}
 
-console.log("Listening on: ", BunnySDK.net.tcp.toString(listener));
-BunnySDK.net.http.serve(
-  async (req) => {
-    console.log(`[INFO]: ${req.method} - ${req.url}`);
-    await sleep(1);
-    return new Response("Hello mom!");
-  },
-);
+render(
+  () => (
+    <Router>
+      <Index />
+    </Router>
+  ),
+  document.getElementById("root") as HTMLElement,
+)
